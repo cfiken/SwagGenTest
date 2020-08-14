@@ -14,7 +14,7 @@ extension API.Sample {
     */
     public enum GetSomeEndpoint {
 
-        public static let service = APIService<Response>(id: "get_some_endpoint", tag: "sample", method: "GET", path: "/sample/{userId}", hasBody: false, securityRequirements: [])
+        public static let service = APIService<Response>(id: "get_some_endpoint", tag: "sample", method: "GET", path: "/sample/{userId}", hasBody: false)
 
         public final class Request: APIRequest<Response> {
 
@@ -47,44 +47,12 @@ extension API.Sample {
         }
 
         public enum Response: APIResponseValue, CustomStringConvertible, CustomDebugStringConvertible {
-
-            /** セットアップに使用する一時的なキーです。 */
-            public class Status200: APIModel {
-
-                public var sample: String?
-
-                public init(sample: String? = nil) {
-                    self.sample = sample
-                }
-
-                public required init(from decoder: Decoder) throws {
-                    let container = try decoder.container(keyedBy: StringCodingKey.self)
-
-                    sample = try container.decodeIfPresent("sample")
-                }
-
-                public func encode(to encoder: Encoder) throws {
-                    var container = encoder.container(keyedBy: StringCodingKey.self)
-
-                    try container.encodeIfPresent(sample, forKey: "sample")
-                }
-
-                public func isEqual(to object: Any?) -> Bool {
-                  guard let object = object as? Status200 else { return false }
-                  guard self.sample == object.sample else { return false }
-                  return true
-                }
-
-                public static func == (lhs: Status200, rhs: Status200) -> Bool {
-                    return lhs.isEqual(to: rhs)
-                }
-            }
-            public typealias SuccessType = Status200
+            public typealias SuccessType = SampleResponse
 
             /** Success */
-            case status200(Status200)
+            case status200(SampleResponse)
 
-            public var success: Status200? {
+            public var success: SampleResponse? {
                 switch self {
                 case .status200(let response): return response
                 }
@@ -110,7 +78,7 @@ extension API.Sample {
 
             public init(statusCode: Int, data: Data, decoder: ResponseDecoder) throws {
                 switch statusCode {
-                case 200: self = try .status200(decoder.decode(Status200.self, from: data))
+                case 200: self = try .status200(decoder.decode(SampleResponse.self, from: data))
                 default: throw APIClientError.unexpectedStatusCode(statusCode: statusCode, data: data)
                 }
             }

@@ -18,22 +18,14 @@ public protocol ResponseDecoder {
 
 extension JSONDecoder: ResponseDecoder {}
 
-public protocol RequestEncoder {
-
-    func encode<T: Encodable>(_ value: T) throws -> Data
-}
-
-extension JSONEncoder: RequestEncoder {}
-
 extension APIModel {
     func encode() -> [String: Any] {
         guard
             let jsonData = try? JSONEncoder().encode(self),
-            let jsonValue = try? JSONSerialization.jsonObject(with: jsonData),
-            let jsonDictionary = jsonValue as? [String: Any] else {
+            let jsonDictionary = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
                 return [:]
         }
-        return jsonDictionary
+        return jsonDictionary ?? [:]
     }
 }
 
@@ -193,7 +185,7 @@ extension KeyedEncodingContainer {
 
 extension DateFormatter {
 
-    convenience init(formatString: String, locale: Locale? = nil, timeZone: TimeZone? = nil, calendar: Calendar? = nil) {
+    convenience init(formatString: String, locale: Locale? = nil, timeZone: TimeZone? = nil) {
         self.init()
         dateFormat = formatString
         if let locale = locale {
@@ -201,9 +193,6 @@ extension DateFormatter {
         }
         if let timeZone = timeZone {
             self.timeZone = timeZone
-        }
-        if let calendar = calendar {
-            self.calendar = calendar
         }
     }
 
@@ -222,13 +211,11 @@ let dateDecoder: (Decoder) throws -> Date = { decoder in
         formatterWithMilliseconds.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         formatterWithMilliseconds.locale = Locale(identifier: "en_US_POSIX")
         formatterWithMilliseconds.timeZone = TimeZone(identifier: "UTC")
-        formatterWithMilliseconds.calendar = Calendar(identifier: .gregorian)
 
         let formatterWithoutMilliseconds = DateFormatter()
         formatterWithoutMilliseconds.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         formatterWithoutMilliseconds.locale = Locale(identifier: "en_US_POSIX")
         formatterWithoutMilliseconds.timeZone = TimeZone(identifier: "UTC")
-        formatterWithoutMilliseconds.calendar = Calendar(identifier: .gregorian)
 
         guard let date = formatterWithMilliseconds.date(from: string) ??
             formatterWithoutMilliseconds.date(from: string) else {
