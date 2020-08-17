@@ -13,7 +13,7 @@ $ mint run SwagGen@fix/swiftenv_swift_version swaggen generate openapi.json -d g
 To generate by Swaggen 4.2.0:
 
 ```sh
-$ mint run SwagGen@fix/swiftenv_swift_version swaggen generate openapi.json -d generated
+$ mint run SwagGen@fix/swiftenv_swift_version_4.2.0 swaggen generate openapi.json -d generated_4.2.0
 ```
 
 The SwagGen is fork of official SwagGen https://github.com/yonaskolb/SwagGen.
